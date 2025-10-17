@@ -38,6 +38,25 @@
             100% { background-position: 0% 50%; }
         }
 
+        @keyframes glitchIntense {
+            0% { transform: translate(0) skew(0deg); }
+            10% { transform: translate(-10px, 10px) skew(15deg); filter: hue-rotate(90deg); }
+            20% { transform: translate(10px, -10px) skew(-15deg); filter: hue-rotate(180deg); }
+            30% { transform: translate(-15px, 0) skew(0deg); filter: hue-rotate(270deg); }
+            40% { transform: translate(15px, 0) skew(-5deg); filter: hue-rotate(360deg); }
+            50% { transform: translate(0) skew(10deg); filter: contrast(2); }
+            60% { transform: translate(-5px, 5px) skew(-10deg); filter: blur(1px); }
+            70% { transform: translate(5px, -5px) skew(5deg); filter: brightness(1.5); }
+            80% { transform: translate(-10px, -10px) skew(-5deg); filter: invert(0.5); }
+            90% { transform: translate(10px, 10px) skew(0deg); filter: saturate(2); }
+            100% { transform: translate(0) skew(0deg); filter: none; }
+        }
+
+        @keyframes errorBorder {
+            0%, 100% { border-color: rgba(255, 0, 0, 0.2); }
+            50% { border-color: rgba(255, 0, 0, 1); }
+        }
+
         body {
             font-family: 'Orbitron', monospace;
             background: #0a0a0f;
@@ -127,11 +146,74 @@
             font-weight: 900;
             text-transform: uppercase;
             letter-spacing: 4px;
-            text-shadow: 
+            text-shadow:
                 0 0 10px #00ffff,
                 0 0 20px #00ffff,
                 0 0 30px #00ffff;
             animation: neonPulse 2s ease-in-out infinite;
+        }
+
+        .operation-selector {
+            margin-bottom: 30px;
+        }
+
+        .operation-pills {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .operation-pill {
+            padding: 12px 24px;
+            background: rgba(0, 0, 0, 0.6);
+            border: 2px solid rgba(0, 255, 255, 0.3);
+            border-radius: 25px;
+            font-family: 'Orbitron', monospace;
+            font-size: 14px;
+            font-weight: 700;
+            color: rgba(0, 255, 255, 0.5);
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .operation-pill::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 255, 255, 0.3), transparent);
+            transition: left 0.5s;
+        }
+
+        .operation-pill:hover::before {
+            left: 100%;
+        }
+
+        .operation-pill:hover {
+            border-color: rgba(0, 255, 255, 0.6);
+            color: rgba(0, 255, 255, 0.8);
+            box-shadow: 0 0 15px rgba(0, 255, 255, 0.3);
+        }
+
+        .operation-pill.active {
+            background: rgba(0, 255, 255, 0.15);
+            border-color: #00ffff;
+            color: #00ffff;
+            box-shadow:
+                0 0 20px rgba(0, 255, 255, 0.5),
+                inset 0 0 20px rgba(0, 255, 255, 0.2);
+            text-shadow: 0 0 10px #00ffff;
+        }
+
+        .operation-pill:active {
+            transform: scale(0.95);
         }
 
         .input-group {
@@ -272,12 +354,78 @@
             letter-spacing: 3px;
             text-shadow: 0 0 5px #00ffff;
         }
+
+        .glitch-btn {
+            width: 100%;
+            padding: 18px;
+            background: rgba(20, 0, 0, 0.8);
+            color: #ff0000;
+            border: 2px solid #ff0000;
+            border-radius: 0;
+            font-size: 16px;
+            font-weight: 700;
+            font-family: 'Orbitron', monospace;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            transition: all 0.3s;
+            margin-top: 20px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 0 20px rgba(255, 0, 0, 0.3);
+        }
+
+        .glitch-btn:hover {
+            background: rgba(50, 0, 0, 0.8);
+            box-shadow: 
+                0 0 30px rgba(255, 0, 0, 0.6),
+                0 0 50px rgba(255, 0, 0, 0.3),
+                inset 0 0 20px rgba(255, 0, 0, 0.2);
+            text-shadow: 0 0 10px #ff0000;
+        }
+
+        .glitch-btn:active {
+            transform: scale(0.95);
+        }
+
+        .glitching {
+            animation: glitchIntense 0.5s ease-in-out;
+        }
+
+        .error-state {
+            animation: errorBorder 0.5s ease-in-out infinite;
+        }
+
+        .corrupted {
+            color: #ff0000 !important;
+            text-shadow: 
+                0 0 10px #ff0000,
+                0 0 20px #ff0000,
+                0 0 30px #ff0000 !important;
+        }
     </style>
 </head>
 <body>
     <div class="calculator">
-        <h1>➕ Add Two Numbers</h1>
-        
+        <h1>Calculator</h1>
+
+        <div class="operation-selector">
+            <div class="operation-pills">
+                <div class="operation-pill active" data-operation="add" onclick="selectOperation('add')">
+                    ➕ Add
+                </div>
+                <div class="operation-pill" data-operation="subtract" onclick="selectOperation('subtract')">
+                    ➖ Subtract
+                </div>
+                <div class="operation-pill" data-operation="multiply" onclick="selectOperation('multiply')">
+                    ✖️ Multiply
+                </div>
+                <div class="operation-pill" data-operation="divide" onclick="selectOperation('divide')">
+                    ➗ Divide
+                </div>
+            </div>
+        </div>
+
         <div class="input-group">
             <label for="number1">First Number</label>
             <input type="number" id="number1" placeholder="Enter first number" step="any">
@@ -288,7 +436,7 @@
             <input type="number" id="number2" placeholder="Enter second number" step="any">
         </div>
 
-        <button onclick="addNumbers()">Calculate Sum</button>
+        <button onclick="calculate()">Calculate</button>
 
         <div class="result">
             <div>
@@ -296,6 +444,8 @@
                 <div class="result-text" id="result">--</div>
             </div>
         </div>
+        
+        <button class="glitch-btn" onclick="corruptResult()">▲ CORRUPT RESULT ▲</button>
     </div>
 
     <script src="script.js"></script>
